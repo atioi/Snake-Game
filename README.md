@@ -23,5 +23,5 @@
    
 ## Control the game with:
 
-    [W]
-[A] [S] [D]
+       W
+     A S D
