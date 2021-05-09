@@ -11,9 +11,9 @@
     - easy
     - medium
     - hard
-   * Map
-    - open
-    - closed 
+   * Map:
+     - open
+     - closed 
     
   * Extra:
     - Name your snake and track your rankings
