@@ -1,3 +1,25 @@
+# snake.ico 
+
+snake.ico used in project comes from: 
+
+https://iconarchive.com/show/animal-icons-by-martin-berube/snake-icon.html
+
+Artist: Martin Berube (Available for custom work)
+
+Iconset: Animal Icons (46 icons)
+
+License: Freeware
+
+Commercial usage: Allowed
+
+Readme file: terms-of-use.txt
+
+
+
+
+
+
+
 # Snake-Game
 
 
