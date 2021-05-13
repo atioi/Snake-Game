@@ -66,6 +66,9 @@ class App:
 
 
 pygame.init()
+icon = pygame.image.load('./snake.ico')
+pygame.display.set_icon(icon)
+pygame.display.set_caption('Snake', 'Snake')
 cell_size = 40
 cell_number = 20
 screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size))
