@@ -1,49 +1,9 @@
-# snake.ico 
+This game was made on this tutorial: https://www.youtube.com/watch?v=QFvqStqPCRU but much modified. I would like to
+highlight that the body snake graphics come from that tutorial and are borrowed from it. You can find it
+on https://github.com/clear-code-projects/Snake.
 
-snake.ico used in project comes from: 
+The license for this tutorial's files can be found
+here:  https://github.com/clear-code-projects/Snake/blob/main/copyright
+"The code and the graphics in this project are in the public domain, you can use them for personal and commercial
+projects. Attributions would be appreciated but are not required." 
 
-https://iconarchive.com/show/animal-icons-by-martin-berube/snake-icon.html
-
-Artist: Martin Berube (Available for custom work)
-
-Iconset: Animal Icons (46 icons)
-
-License: Freeware
-
-Commercial usage: Allowed
-
-Readme file: terms-of-use.txt
-
-
-
-
-
-
-
-# Snake-Game
-
-
-### Classic Snake game (steer your snake and devaour preys) 
-
-## Deatails:
-
-- GUI is made using Tkinter
-- Settings:
-  * Levels (snake speed):
-    - easy
-    - medium
-    - hard
-   * Map:
-     - open
-     - closed 
-    
-  * Extra:
-    - Name your snake and track your rankings
-    - Choose the snake's color 
-    
-   
-   
-## Control the game with:
-
-       W
-     A S D
