@@ -1,75 +1,160 @@
 import sys
 
-from paths import *
-from snake import *
+import pygame
+import pygame.transform
+
+from menu import Menu
+from snake import Snake
+
+colors = {
+    'board_color_1': (175, 215, 70),
+    'board_color_2': (167, 209, 61),
+    'snake_color': (48, 105, 152),
+    'menu_color': (0, 0, 0)
+}
 
 
 class App:
     def __init__(self):
-        pygame.init()
-        self.cell_number = 20
-        self.cell_size = 40
-        self.screen_size = (self.cell_number * self.cell_size, self.cell_number * self.cell_size)
-        self.state = 'options'
-        self.snake = None
+        self.__cell_number = 20
+        self.__cell_size = 40
+        self.snake = Snake(self.__cell_size)
+        self.level = 'easy'
+        self.__state = 'menu'
+        self.__menu = self.create_menu()
+        self.__submenu = self.create_submenu()
 
     def draw_background(self, surface):
-        surface.fill(colors['board_grass_1'])
-        for row in range(self.cell_number):
+        surface.fill(colors['board_color_1'])
+        for row in range(self.__cell_number):
             if row % 2 == 0:
-                for col in range(self.cell_number):
+                for col in range(self.__cell_number):
                     if col % 2 == 0:
-                        grass_rect = pygame.Rect(col * self.cell_size, row * self.cell_size, self.cell_size,
-                                                 self.cell_size)
-                        pygame.draw.rect(surface, colors['board_grass_2'], grass_rect)
+                        grass_rect = pygame.Rect(col * self.__cell_size, row * self.__cell_size, self.__cell_size,
+                                                 self.__cell_size)
+                        pygame.draw.rect(surface, colors['board_color_2'], grass_rect)
             else:
-                for col in range(self.cell_number):
+                for col in range(self.__cell_number):
                     if col % 2 != 0:
-                        grass_rect = pygame.Rect(col * self.cell_size, row * self.cell_size, self.cell_size,
-                                                 self.cell_size)
-                        pygame.draw.rect(surface, colors['board_grass_2'], grass_rect)
+                        grass_rect = pygame.Rect(col * self.__cell_size, row * self.__cell_size, self.__cell_size,
+                                                 self.__cell_size)
+                        pygame.draw.rect(surface, colors['board_color_2'], grass_rect)
 
-    def draw(self, surface):
+    def set_state(self, state: str):
+        """
+        This function sets app state.
+        :param state: State name
+        :return: None
+        """
+        self.__state = state
 
+    def set_level(self, level):
+        self.level = 'easy'
+
+    def create_menu(self):
+        """
+        This function creates menu using menu module.
+        :return: menu.Menu()
+        """
+        menu = Menu()
+
+        FONT = './fonts/LuckiestGuy-Regular.ttf'
+        FONT_SIZE = 70
+        COLOR = (0, 0, 0)
+
+        menu.create_button('play', lambda: self.set_state('game'), COLOR, FONT_SIZE, FONT,
+                           (self.__cell_size * self.__cell_number / 2, 70 + 5 * self.__cell_size))
+
+        menu.create_button('level', lambda: self.set_state('level'), COLOR, FONT_SIZE, FONT,
+                           (self.__cell_size * self.__cell_number / 2, 70 + 7 * self.__cell_size))
+
+        return menu
+
+    def create_submenu(self):
+        """
+        This function creates menu using menu module.
+        :return: menu.Menu()
+        """
+        menu = Menu()
+
+        FONT = './fonts/LuckiestGuy-Regular.ttf'
+        FONT_SIZE = 70
+        COLOR = (0, 0, 0)
+
+        menu.create_button('easy', lambda: self.set_level('easy'), COLOR, FONT_SIZE, FONT,
+                           (self.__cell_size * self.__cell_number / 2, 70 + 4 * self.__cell_size))
+
+        menu.create_button('medium', lambda: self.set_level('medium'), COLOR, FONT_SIZE, FONT,
+                           (self.__cell_size * self.__cell_number / 2, 70 + 6 * self.__cell_size))
+
+        menu.create_button('hard', lambda: self.set_level('hard'), COLOR, FONT_SIZE, FONT,
+                           (self.__cell_size * self.__cell_number / 2, 70 + 8 * self.__cell_size))
+
+        return menu
+
+    def game(self, surface):
         self.snake.draw_snake(surface)
 
-    def game(self):
+    def window(self):
+        """
+        The main pygame - window loop.
+        :return: None
+        """
         pygame.init()
-        icon = pygame.image.load(icons_paths['snake'])
-        pygame.display.set_icon(icon)
-        pygame.display.set_caption('Snake', 'Snake')
-        screen = pygame.display.set_mode(self.screen_size)
-        self.snake = Snake(self.cell_size)
+
+        screen_size = (self.__cell_number * self.__cell_size, self.__cell_number * self.__cell_size)
+        screen = pygame.display.set_mode(screen_size)
+
         SCREEN_UPDATE = pygame.USEREVENT
         pygame.time.set_timer(SCREEN_UPDATE, 150)
         clock = pygame.time.Clock()
+
         while True:
+
+            self.draw_background(screen)
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
-                if event.type == SCREEN_UPDATE and self.state == 'game':
-                    self.snake.move_snake()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP and app.snake.direction.y != 1:
-                        app.snake.direction = Vector2(0, -1)
-                    elif event.key == pygame.K_DOWN and app.snake.direction.y != -1:
-                        app.snake.direction = Vector2(0, 1)
-                    elif event.key == pygame.K_LEFT and app.snake.direction.x != 1:
-                        app.snake.direction = Vector2(-1, 0)
-                    elif event.key == pygame.K_RIGHT and app.snake.direction.x != -1:
-                        app.snake.direction = Vector2(1, 0)
-                    elif event.key == pygame.K_ESCAPE and self.state == 'options':
-                        self.state = 'game'
-                    elif event.key == pygame.K_ESCAPE and self.state == 'game':
-                        self.state = 'options'
 
-            self.draw_background(screen)
-            if self.state == 'game':
-                self.draw(screen)
+                if event.type == SCREEN_UPDATE:
+                    self.snake.move_snake()
+
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        if self.__state == 'menu':
+                            self.__menu.click()
+                    elif event.key == pygame.K_DOWN:
+                        if self.__state == 'menu':
+                            self.__menu.down()
+                        elif self.__state == 'level':
+                            self.__submenu.down()
+                        elif self.__state == 'game':
+                            self.snake.down()
+                    elif event.key == pygame.K_UP:
+                        if self.__state == 'menu':
+                            self.__menu.up()
+                        elif self.__state == 'level':
+                            self.__submenu.up()
+                        elif self.__state == 'game':
+                            self.snake.up()
+                    elif event.key == pygame.K_RIGHT:
+                        if self.__state == 'game':
+                            self.snake.right()
+                    elif event.key == pygame.K_LEFT:
+                        if self.__state == 'game':
+                            self.snake.left()
+
+            if self.__state == 'menu':
+                self.__menu.display(screen)
+            elif self.__state == 'game':
+                self.game(screen)
+            elif self.__state == 'level':
+                self.__submenu.display(screen)
+
             pygame.display.update()
             clock.tick(60)
 
 
-app = App()
-app.game()
+App().window()
