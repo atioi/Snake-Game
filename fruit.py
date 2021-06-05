@@ -13,7 +13,7 @@ class Fruit:
         self.pos = Vector2(self.x, self.y)
         self.cell_size = cell_size
         self.cell_number = cell_number
-        self.icon = pygame.image.load(image_paths['fruit']).convert_alpha()
+        self.icon = pygame.image.load(image_paths['fruit'])
 
     def draw_fruit(self, surface):
         self.icon = pygame.transform.smoothscale(self.icon, (self.cell_size, self.cell_size))

@@ -3,8 +3,8 @@ import sys
 import pygame
 import pygame.transform
 
+from game import Game
 from menu import Menu
-from snake import Snake
 
 colors = {
     'board_color_1': (175, 215, 70),
@@ -13,32 +13,24 @@ colors = {
     'menu_color': (0, 0, 0)
 }
 
+fonts = {
+    'menu': './fonts/LuckiestGuy-Regular.ttf'
+}
 
 class App:
     def __init__(self):
+        # App dimensions
         self.__cell_number = 20
         self.__cell_size = 40
-        self.snake = Snake(self.__cell_size)
-        self.level = 'easy'
-        self.__state = 'menu'
-        self.__menu = self.create_menu()
-        self.__submenu = self.create_submenu()
 
-    def draw_background(self, surface):
-        surface.fill(colors['board_color_1'])
-        for row in range(self.__cell_number):
-            if row % 2 == 0:
-                for col in range(self.__cell_number):
-                    if col % 2 == 0:
-                        grass_rect = pygame.Rect(col * self.__cell_size, row * self.__cell_size, self.__cell_size,
-                                                 self.__cell_size)
-                        pygame.draw.rect(surface, colors['board_color_2'], grass_rect)
-            else:
-                for col in range(self.__cell_number):
-                    if col % 2 != 0:
-                        grass_rect = pygame.Rect(col * self.__cell_size, row * self.__cell_size, self.__cell_size,
-                                                 self.__cell_size)
-                        pygame.draw.rect(surface, colors['board_color_2'], grass_rect)
+        # App state
+        self.__state = 'menu'
+        self.game = Game(self.__cell_size, self.__cell_number)
+
+        #  Menu and submenus
+        self.__menu = self.menu()
+        self.__submenu = self.submenu()
+        self.__pausemenu = self.pausemenu()
 
     def set_state(self, state: str):
         """
@@ -49,51 +41,70 @@ class App:
         self.__state = state
 
     def set_level(self, level):
-        self.level = 'easy'
-
-    def create_menu(self):
         """
-        This function creates menu using menu module.
-        :return: menu.Menu()
+        This function sets game level
+        :param level: game level (easy/medium/hard)
+        :return: None
         """
-        menu = Menu()
+        self.game.set_level(level)
 
-        FONT = './fonts/LuckiestGuy-Regular.ttf'
-        FONT_SIZE = 70
-        COLOR = (0, 0, 0)
-
-        menu.create_button('play', lambda: self.set_state('game'), COLOR, FONT_SIZE, FONT,
-                           (self.__cell_size * self.__cell_number / 2, 70 + 5 * self.__cell_size))
-
-        menu.create_button('level', lambda: self.set_state('level'), COLOR, FONT_SIZE, FONT,
-                           (self.__cell_size * self.__cell_number / 2, 70 + 7 * self.__cell_size))
-
-        return menu
-
-    def create_submenu(self):
+    def menu(self):
         """
-        This function creates menu using menu module.
-        :return: menu.Menu()
+        This function creates a main menu.
+        :return: Menu()
         """
-        menu = Menu()
+        return Menu().build([
+            ('play', lambda: self.play()),
+            ('level', lambda: self.set_state('level')),
+            ('exit', lambda: self.set_state('exit'))
+        ],
+            x=self.__cell_size * self.__cell_number / 2,
+            y_start=100,
+            y_step=70,
+            color=colors['menu_color'],
+            font_size=70,
+            font=fonts['menu'])
 
-        FONT = './fonts/LuckiestGuy-Regular.ttf'
-        FONT_SIZE = 70
-        COLOR = (0, 0, 0)
+    def submenu(self):
+        """
+        This function creates a submenu - the user interface to choose game level.
+        :return: Menu()
+        """
+        return Menu().build([
+            ('easy', lambda: self.game.set_level('easy')),
+            ('medium', lambda: self.game.set_level('medium')),
+            ('hard', lambda: self.game.set_level('hard'))
+        ],
+            x=self.__cell_size * self.__cell_number / 2,
+            y_start=100,
+            y_step=70,
+            color=colors['menu_color'],
+            font_size=70,
+            font=fonts['menu'])
 
-        menu.create_button('easy', lambda: self.set_level('easy'), COLOR, FONT_SIZE, FONT,
-                           (self.__cell_size * self.__cell_number / 2, 70 + 4 * self.__cell_size))
+    def pausemenu(self):
+        """
+        This function creates a pause menu - the menu when user clicks ESCAPE button.
+        :return: Menu()
+        """
+        return Menu().build([
+            ('resume', lambda: self.set_state('game')),
+            ('menu', lambda: self.set_state('menu')),
+            ('exit', lambda: self.set_state('exit'))
+        ],
+            x=self.__cell_size * self.__cell_number / 2,
+            y_start=100,
+            y_step=70,
+            color=colors['menu_color'],
+            font_size=70,
+            font=fonts['menu'])
 
-        menu.create_button('medium', lambda: self.set_level('medium'), COLOR, FONT_SIZE, FONT,
-                           (self.__cell_size * self.__cell_number / 2, 70 + 6 * self.__cell_size))
+    def play(self):
+        self.game.reset()
+        self.set_state('game')
 
-        menu.create_button('hard', lambda: self.set_level('hard'), COLOR, FONT_SIZE, FONT,
-                           (self.__cell_size * self.__cell_number / 2, 70 + 8 * self.__cell_size))
-
-        return menu
-
-    def game(self, surface):
-        self.snake.draw_snake(surface)
+    def lose(self):
+        pass
 
     def window(self):
         """
@@ -111,47 +122,46 @@ class App:
 
         while True:
 
-            self.draw_background(screen)
+            self.game.draw_background(screen)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif self.__state == 'exit':
+                    pygame.quit()
+                    sys.exit()
 
                 if event.type == SCREEN_UPDATE:
-                    self.snake.move_snake()
+                    if self.__state == 'game':
+                        self.game.update()
 
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
-                        if self.__state == 'menu':
-                            self.__menu.click()
-                    elif event.key == pygame.K_DOWN:
-                        if self.__state == 'menu':
-                            self.__menu.down()
-                        elif self.__state == 'level':
-                            self.__submenu.down()
-                        elif self.__state == 'game':
-                            self.snake.down()
-                    elif event.key == pygame.K_UP:
-                        if self.__state == 'menu':
-                            self.__menu.up()
-                        elif self.__state == 'level':
-                            self.__submenu.up()
-                        elif self.__state == 'game':
-                            self.snake.up()
-                    elif event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_ESCAPE:
                         if self.__state == 'game':
-                            self.snake.right()
-                    elif event.key == pygame.K_LEFT:
+                            self.set_state('pause')
+                        elif self.__state == 'level':
+                            self.set_state('menu')
+                        elif self.__state == 'pause':
+                            self.set_state('game')
+                    else:
                         if self.__state == 'game':
-                            self.snake.left()
+                            self.game.key_event(event.key)
+                        elif self.__state == 'menu':
+                            self.__menu.key_event(event.key)
+                        elif self.__state == 'level':
+                            self.__submenu.key_event(event.key)
+                        elif self.__state == 'pause':
+                            self.__pausemenu.key_event(event.key)
 
             if self.__state == 'menu':
                 self.__menu.display(screen)
             elif self.__state == 'game':
-                self.game(screen)
+                self.game.draw(screen)
             elif self.__state == 'level':
                 self.__submenu.display(screen)
+            elif self.__state == 'pause':
+                self.__pausemenu.display(screen)
 
             pygame.display.update()
             clock.tick(60)

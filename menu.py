@@ -7,27 +7,10 @@ class Menu:
         self.__pointer = 0
 
     def create_button(self, name, function, color=(0, 0, 0), size=25, font=None, position=(0, 0)):
-        """
-        This function "creates" menu's button using Text class from pygamex.
-        :param position:
-        :param font:
-        :param size:
-        :param color:
-        :param name: button name eg. 'start'
-        :param function: Function that will be execute when button is clicked.
-        :return:
-        """
-
         button_surface = Text(name, color, size, font, position)
         self.__menu.append((name, button_surface, function))
 
     def display(self, surface):
-        """
-        This function displays menu on a screen.
-        :param surface: pygame.surface
-        :return: None
-        """
-
         self.on_hover()
 
         for index, opt in enumerate(self.__menu):
@@ -57,3 +40,30 @@ class Menu:
         """
         name, value, function = self.__menu[self.__pointer % len(self.__menu)]
         function()
+
+    def build(self, buttons, x, y_start, y_step, color, font_size, font):
+        """
+        This function build automatically menu from given:
+        :param buttons: array[(str, function),..] - array of tuples that contains button's text and button's function
+        :param x: menu x position
+        :param y_start: menu y start position
+        :param y_step: Space between buttons
+        :param color: menu's buttons' color
+        :param font_size: menu's buttons' font size
+        :param font: menu's buttons' font
+        :return: Menu()
+        """
+        for index, value in enumerate(buttons):
+            text, function = value
+            self.create_button(text, function, color, font_size, font,
+                               (x, y_start + index * y_step))
+        return self
+
+    def key_event(self, key):
+        if key == pygame.K_UP:
+            self.up()
+        elif key == pygame.K_DOWN:
+            self.down()
+        elif key == pygame.K_RETURN:
+            self.click()
+

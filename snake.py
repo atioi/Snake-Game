@@ -106,3 +106,7 @@ class Snake:
 
     def left(self):
         self.direction = Vector2(-1, 0)
+
+    def reset(self):
+        self.body = [Vector2(5, 1), Vector2(5, 2), Vector2(5, 3)]
+        self.direction = Vector2(1, 0)
