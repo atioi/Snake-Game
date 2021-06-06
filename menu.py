@@ -1,4 +1,4 @@
-from pygamex import *
+from text import *
 
 
 class Menu:

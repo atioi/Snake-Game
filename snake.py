@@ -10,6 +10,7 @@ class Snake:
         self.cell_size = cell_size
         self.head = None
         self.tail = None
+        self.steer = True
         # Snake body:
         self.head_up = pygame.image.load('./graphics/snake_body/head_up.png')
         self.head_down = pygame.image.load('./graphics/snake_body/head_down.png')
@@ -91,6 +92,8 @@ class Snake:
             body_copy = self.body[:-1]
             body_copy.insert(0, body_copy[0] + self.direction)
             self.body = body_copy[:]
+
+        self.steer = True
 
     def add_block(self):
         self.new_block = True
