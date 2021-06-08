@@ -3,14 +3,9 @@ import time
 import pygame
 
 from fruit import Fruit
+from settings import COLORS
 from snake import Snake
 
-colors = {
-    'board_color_1': (175, 215, 70),
-    'board_color_2': (167, 209, 61),
-    'snake_color': (48, 105, 152),
-    'menu_color': (0, 0, 0)
-}
 
 class Game:
     def __init__(self, app, cell_size, cell_number, level='EASY'):
@@ -28,20 +23,20 @@ class Game:
         self.__snake.draw_snake(surface)
 
     def draw_background(self, surface):
-        surface.fill(colors['board_color_1'])
+        surface.fill(COLORS['board_color_1'])
         for row in range(self.__cell_number):
             if row % 2 == 0:
                 for col in range(self.__cell_number):
                     if col % 2 == 0:
                         grass_rect = pygame.Rect(col * self.__cell_size, row * self.__cell_size, self.__cell_size,
                                                  self.__cell_size)
-                        pygame.draw.rect(surface, colors['board_color_2'], grass_rect)
+                        pygame.draw.rect(surface, COLORS['board_color_2'], grass_rect)
             else:
                 for col in range(self.__cell_number):
                     if col % 2 != 0:
                         grass_rect = pygame.Rect(col * self.__cell_size, row * self.__cell_size, self.__cell_size,
                                                  self.__cell_size)
-                        pygame.draw.rect(surface, colors['board_color_2'], grass_rect)
+                        pygame.draw.rect(surface, COLORS['board_color_2'], grass_rect)
 
     def set_level(self, level):
         self.__level = level
