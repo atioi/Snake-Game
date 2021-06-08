@@ -21,7 +21,7 @@ class App:
         # App state:
         self.__state = 'INTRO'
         self.game = Game(self, self.__cell_size, self.__cell_number)
-        self.name = 'YOUR NAME'
+        self.name = 'YOUR_NAME'
 
         #  Menu and submenus:
         self.__menu = self.menu()
