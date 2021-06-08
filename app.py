@@ -78,6 +78,8 @@ class App:
             f.write(self.name + ' ' + str(self.game.points) + ' ' + str(self.game.end_time - self.start_time))
             f.close()
 
+
+
     def player_name(self, surface):
         x = self.__cell_size * self.__cell_number / 2
         y_start = 100
